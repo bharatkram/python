@@ -29,13 +29,10 @@ def singleCommands(command):
 
     if command == "cls":
         os.system("cls")
-        return
     elif command == "help":
         print("", *sorted(singlecommands + dependantcommands), "", sep="\n")
-        return
     elif command == "dir":
         print("", *os.listdir(), "", sep="\n")
-        return
 
 
 def insertionSort(inpList, inp):
@@ -61,22 +58,29 @@ def takeInputs():
             if inp.strip() == "":
                 continue
             inpList = insertionSort(inpList, inp)
-            print(inpList)
         except KeyboardInterrupt:
             print("", *inpList, sep="\n")
             return
 
 
+def sortCommand(command, dependants):
+    if not dependants:
+        takeInputs()
+        return
+
+    print("sort called")
+    return
+
+
+def catCommand(command, dependants):
+    print("cat called")
+    return
+
+
 def dependantCommands(command, dependants):
-    if command == "sort":
-        if not dependants:
-            takeInputs()
-            return
-        print("sort called")
-        return
-    elif command == "cat":
-        print("cat called")
-        return
+    commands = {"sort": sortCommand, "cat": catCommand}
+    commands[command](command, dependants)
+    return
 
 
 if __name__ == "__main__":
