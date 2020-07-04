@@ -29,14 +29,54 @@ def singleCommands(command):
 
     if command == "cls":
         os.system("cls")
+        return
     elif command == "help":
         print("", *sorted(singlecommands + dependantcommands), "", sep="\n")
+        return
     elif command == "dir":
         print("", *os.listdir(), "", sep="\n")
+        return
+
+
+def insertionSort(inpList, inp):
+    inpList.append(inp)
+    if len(inpList) == 1:
+        return inpList
+    pos = len(inpList) - 1
+    while pos != 0:
+        if inpList[pos] < inpList[pos - 1]:
+            inpList[pos], inpList[pos - 1] = inpList[pos - 1], inpList[pos]
+            pos -= 1
+            continue
+        break
+    return inpList
+
+
+def takeInputs():
+    inpList = []
+    while True:
+        try:
+            inp = input()
+            # if input is a empty.
+            if inp.strip() == "":
+                continue
+            inpList = insertionSort(inpList, inp)
+            print(inpList)
+        except KeyboardInterrupt:
+            print("", *inpList, sep="\n")
+            return
 
 
 def dependantCommands(command, dependants):
-    return
+    if command == "sort":
+        if not dependants:
+            takeInputs()
+            return
+        print("sort called")
+        return
+    elif command == "cat":
+        print("cat called")
+        return
 
 
 if __name__ == "__main__":
@@ -53,14 +93,16 @@ if __name__ == "__main__":
 
         # separate the command from the input string.
         command, _, rest = inp.partition(" ")
-        # print(f"{command}\n{inp}")
+        # print(f"{command}\n{rest}")
 
         # check if the command is recognised.
         if command not in singleCommandsList and command not in dependantCommandsList:
             print(f"No such command as {command}\n")
             continue
 
+        # checking if the command is present in the list.
         if command in singleCommandsList:
+            # checking if any parameters are passed which aren't necessary.
             if not rest:
                 singleCommands(command)
                 continue
