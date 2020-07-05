@@ -15,11 +15,11 @@ def singleCommands(command):
     # print(command)
 
     # tuple to store the details of all single word commands.
-    singlecommands = ("\033[1mcls\033[0m - clears the screen", "\033[1mhelp\033[0m - shows all the commands",
-                      "\033[1mdir\033[0m - shows all the files in the present directory", "\033[1mexit\033[0m - exit the program.")
+    singlecommands = ("mcls - clears the screen", "mhelp - shows all the commands",
+                      "mdir - shows all the files in the present directory", "mexit - exit the program.")
     # tuple to store the details of all dependent commands.
-    dependantcommands = ("\033[1mcat\033[0m - reads contents of the file",
-                         "\033[1msort\033[0m - prints sorted order of the contents of folder")
+    dependantcommands = ("mcat - reads contents of the file",
+                         "msort - prints sorted order of the contents of folder")
 
     if len(singleCommandsList) != len(singlecommands):
         print("Single commands details not covered.")
@@ -30,7 +30,7 @@ def singleCommands(command):
     if command == "cls":
         os.system("cls")
     elif command == "help":
-        print(*sorted(singlecommands + dependantcommands), "", sep="\n")
+        print(*sorted(singlecommands + dependantcommands), sep="\n", end="\n\n")
     elif command == "dir":
         print("", *os.listdir(), "", sep="\n")
 
@@ -62,7 +62,7 @@ def takeInputs():
             inpList = insertionSort(inpList, inp)
         # break the loop if the user inputs ctrl+c.
         except KeyboardInterrupt:
-            print("", *inpList, sep="\n")
+            print("", *inpList, sep="\n", end="\n\n")
             return
 
 
@@ -81,7 +81,7 @@ def sortContents(fileName, reverse, output):
 
     # check where the output is to be given.
     if not output:
-        print(*contents, sep="\n")
+        print(*contents, sep="\n", end="\n\n")
     else:
         if os.path.isfile(output):
             inp = input("Do you want to rewrite the file?(y/n)")
@@ -166,8 +166,15 @@ def sortCommand(command, dependants):
 
 # to perform the read operation.
 def catCommand(command, dependants):
-    print("cat called")
-    return
+    if not os.path.isfile(dependants):
+        print(f"File {dependants} not found.")
+        return
+
+    file = open(dependants, "r")
+    contents = file.readlines()
+    file.close()
+
+    print(*contents, sep="", end="\n\n")
 
 
 # to call the function according to the command.
