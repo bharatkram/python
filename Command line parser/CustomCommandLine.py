@@ -30,7 +30,7 @@ def singleCommands(command):
     if command == "cls":
         os.system("cls")
     elif command == "help":
-        print("", *sorted(singlecommands + dependantcommands), "", sep="\n")
+        print(*sorted(singlecommands + dependantcommands), "", sep="\n")
     elif command == "dir":
         print("", *os.listdir(), "", sep="\n")
 
@@ -68,8 +68,30 @@ def takeInputs():
 
 # function to sort the contents in file and output them to file or panel as per users input.
 def sortContents(fileName, reverse, output):
-    print("here")
-    return
+    # print(os.getcwd())
+    cwd = os.getcwd()
+
+    # to read the contents of a file and split by end of line.
+    file = open(cwd + "/" + fileName, "r")
+    contents = file.read().splitlines()
+    file.close()
+
+    # sorting the contents as per the requirement.
+    contents.sort(reverse=reverse)
+
+    # check where the output is to be given.
+    if not output:
+        print(*contents, sep="\n")
+    else:
+        if os.path.isfile(output):
+            inp = input("Do you want to rewrite the file?(y/n)")
+            if inp not in ["y", "Y"]:
+                return
+
+        # to write to the specified file.
+        file = open(cwd + "/" + output, "w")
+        file.write("\n".join(contents))
+        file.close()
 
 
 # function to execute each flag and parse the command.
