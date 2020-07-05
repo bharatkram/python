@@ -4,8 +4,8 @@ import os.path
 from pathlib import Path
 
 
-singleCommandsList = ("cls", "help", "dir", "exit")
-dependantCommandsList = ("cat", "sort")
+singleCommandsList = ("cls", "dir", "exit")
+dependantCommandsList = ("cat", "help", "sort")
 
 
 # function to run the single word commands.
@@ -14,23 +14,8 @@ def singleCommands(command):
     global dependantCommandsList
     # print(command)
 
-    # tuple to store the details of all single word commands.
-    singlecommands = ("\033[1mcls\033[0m - clears the screen", "\033[1mhelp\033[0m - shows all the commands",
-                      "\033[1mdir\033[0m - shows all the files in the present directory", "\033[1mexit\033[0m - exit the program.")
-    # tuple to store the details of all dependent commands.
-    dependantcommands = ("\033[1mcat\033[0m - reads contents of the file",
-                         "\033[1msort\033[0m - prints sorted order of the contents of folder")
-
-    if len(singleCommandsList) != len(singlecommands):
-        print("Single commands details not covered.")
-
-    if len(dependantCommandsList) != len(dependantcommands):
-        print("Commands details not covered.")
-
     if command == "cls":
         os.system("cls")
-    elif command == "help":
-        print("", *sorted(singlecommands + dependantcommands), "", sep="\n")
     elif command == "dir":
         print("", *os.listdir(), "", sep="\n")
 
@@ -62,14 +47,36 @@ def takeInputs():
             inpList = insertionSort(inpList, inp)
         # break the loop if the user inputs ctrl+c.
         except KeyboardInterrupt:
-            print("", *inpList, sep="\n")
+            print("", *inpList, sep="\n", end="\n\n")
             return
 
 
 # function to sort the contents in file and output them to file or panel as per users input.
 def sortContents(fileName, reverse, output):
-    print("here")
-    return
+    # print(os.getcwd())
+    cwd = os.getcwd()
+
+    # to read the contents of a file and split by end of line.
+    file = open(cwd + "/" + fileName, "r")
+    contents = file.read().splitlines()
+    file.close()
+
+    # sorting the contents as per the requirement.
+    contents.sort(reverse=reverse)
+
+    # check where the output is to be given.
+    if not output:
+        print(*contents, sep="\n", end="\n\n")
+    else:
+        if os.path.isfile(output):
+            inp = input("Do you want to rewrite the file?(y/n)")
+            if inp not in ["y", "Y"]:
+                return
+
+        # to write to the specified file.
+        file = open(cwd + "/" + output, "w")
+        file.write("\n".join(contents))
+        file.close()
 
 
 # function to execute each flag and parse the command.
@@ -144,13 +151,50 @@ def sortCommand(command, dependants):
 
 # to perform the read operation.
 def catCommand(command, dependants):
-    print("cat called")
-    return
+    if not os.path.isfile(dependants):
+        print(f"File {dependants} not found.")
+        return
+
+    file = open(dependants, "r")
+    contents = file.readlines()
+    file.close()
+
+    print(*contents, sep="", end="\n\n")
+
+
+# function to run the help command.
+def helpCommand(command, dependants):
+    # the dictionary that stores the commands and their details as key value pairs.
+    commandsDict = {"cls": ["Clears the screen."],
+                    "help": ["Gives information about a command.", f"If any command is\n{' ':<15}specified, all the detailed information is provided."],
+                    "dir": ["Shows all the files in the present directory."],
+                    "exit": ["Exit the program."],
+                    "cat": ["Reads the contents of the file."],
+                    "sort": ["Prints sorted order of the contents.", f"The command is available\n{' ':<15}with few options to get the output as per\n{' ':<15}requirements.", f"\n\n {'-r[everse]':<15}To sort in the decending order.", f"\n {'-o[utput]':<15}To save the output in a file specified."]}
+
+    # if the dependants are given.
+    if dependants != "":
+        # to know if there are more than one commands asked for at once.
+        keys = tuple(dependants.split(" "))
+        # to see if the command exists.
+        try:
+            print(f"\n{keys[0].upper():<15}{' '.join(commandsDict[keys[0]])}\n" if len(keys)
+                  == 1 else f"\n{'help':<15}{commandsDict['help'][0]}\n")
+        # if the command doesnot exist.
+        except KeyError:
+            print(f"{keys} not found.")
+        return
+
+    # if no dependants are given.
+    print()
+    for key in commandsDict.keys():
+        print(f"{key.upper():<15}{commandsDict[key][0]}")
+    print()
 
 
 # to call the function according to the command.
 def dependantCommands(command, dependants):
-    commands = {"sort": sortCommand, "cat": catCommand}
+    commands = {"sort": sortCommand, "cat": catCommand, "help": helpCommand}
     commands[command](command, dependants)
     return
 
