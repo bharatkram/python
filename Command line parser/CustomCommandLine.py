@@ -162,31 +162,34 @@ def catCommand(command, dependants):
     print(*contents, sep="", end="\n\n")
 
 
+# function to run the help command.
 def helpCommand(command, dependants):
-    # tuple to store the details of all single word commands.
-    # singlecommands = ("cls - clears the screen", "help - shows all the commands",
-    #                   "dir - shows all the files in the present directory", "exit - exit the program.")
-    # # tuple to store the details of all dependent commands.
-    # dependantcommands = ("cat - reads contents of the file",
-    #                      "sort - prints sorted order of the contents of folder")
-    # print(*sorted(singlecommands + dependantcommands), sep="\n", end="\n\n")
+    # the dictionary that stores the commands and their details as key value pairs.
+    commandsDict = {"cls": ["Clears the screen."],
+                    "help": ["Gives information about a command.", f"If any command is\n{' ':<15}specified, all the detailed information is provided."],
+                    "dir": ["Shows all the files in the present directory."],
+                    "exit": ["Exit the program."],
+                    "cat": ["Reads the contents of the file."],
+                    "sort": ["Prints sorted order of the contents.", f"The command is available\n{' ':<15}with few options to get the output as per\n{' ':<15}requirements.", f"\n\n {'-r[everse]':<15}To sort in the decending order.", f"\n {'-o[utput]':<15}To save the output in a file specified."]}
 
-    commandsDict = {"cls": "Clears the screen.",
-                    "help": "Gives information about a command.",
-                    "dir": "Shows all the files in the present directory.",
-                    "exit": "Exit the program.",
-                    "cat": "Reads the contents of the file.",
-                    "sort": "Prints sorted order of the contents in folder if specified or takes in input and then returns the sorted order."}
-
-    keys = tuple(dependants.split(" ")) if dependants != "" else tuple(
-        commandsDict.keys())
-
-    for key in keys:
+    # if the dependants are given.
+    if dependants != "":
+        # to know if there are more than one commands asked for at once.
+        keys = tuple(dependants.split(" "))
+        # to see if the command exists.
         try:
-            print(f"{key} - {commandsDict[key]}")
+            print(f"\n{keys[0].upper():<15}{' '.join(commandsDict[keys[0]])}\n" if len(keys)
+                  == 1 else f"\n{'help':<15}{commandsDict['help'][0]}\n")
+        # if the command doesnot exist.
         except KeyError:
-            print(f"{key} not found.")
+            print(f"{keys} not found.")
         return
+
+    # if no dependants are given.
+    print()
+    for key in commandsDict.keys():
+        print(f"{key.upper():<15}{commandsDict[key][0]}")
+    print()
 
 
 # to call the function according to the command.
