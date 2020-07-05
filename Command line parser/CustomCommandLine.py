@@ -4,8 +4,8 @@ import os.path
 from pathlib import Path
 
 
-singleCommandsList = ("cls", "help", "dir", "exit")
-dependantCommandsList = ("cat", "sort")
+singleCommandsList = ("cls", "dir", "exit")
+dependantCommandsList = ("cat", "help", "sort")
 
 
 # function to run the single word commands.
@@ -14,23 +14,8 @@ def singleCommands(command):
     global dependantCommandsList
     # print(command)
 
-    # tuple to store the details of all single word commands.
-    singlecommands = ("mcls - clears the screen", "mhelp - shows all the commands",
-                      "mdir - shows all the files in the present directory", "mexit - exit the program.")
-    # tuple to store the details of all dependent commands.
-    dependantcommands = ("mcat - reads contents of the file",
-                         "msort - prints sorted order of the contents of folder")
-
-    if len(singleCommandsList) != len(singlecommands):
-        print("Single commands details not covered.")
-
-    if len(dependantCommandsList) != len(dependantcommands):
-        print("Commands details not covered.")
-
     if command == "cls":
         os.system("cls")
-    elif command == "help":
-        print(*sorted(singlecommands + dependantcommands), sep="\n", end="\n\n")
     elif command == "dir":
         print("", *os.listdir(), "", sep="\n")
 
@@ -177,9 +162,36 @@ def catCommand(command, dependants):
     print(*contents, sep="", end="\n\n")
 
 
+def helpCommand(command, dependants):
+    # tuple to store the details of all single word commands.
+    # singlecommands = ("cls - clears the screen", "help - shows all the commands",
+    #                   "dir - shows all the files in the present directory", "exit - exit the program.")
+    # # tuple to store the details of all dependent commands.
+    # dependantcommands = ("cat - reads contents of the file",
+    #                      "sort - prints sorted order of the contents of folder")
+    # print(*sorted(singlecommands + dependantcommands), sep="\n", end="\n\n")
+
+    commandsDict = {"cls": "Clears the screen.",
+                    "help": "Gives information about a command.",
+                    "dir": "Shows all the files in the present directory.",
+                    "exit": "Exit the program.",
+                    "cat": "Reads the contents of the file.",
+                    "sort": "Prints sorted order of the contents in folder if specified or takes in input and then returns the sorted order."}
+
+    keys = tuple(dependants.split(" ")) if dependants != "" else tuple(
+        commandsDict.keys())
+
+    for key in keys:
+        try:
+            print(f"{key} - {commandsDict[key]}")
+        except KeyError:
+            print(f"{key} not found.")
+        return
+
+
 # to call the function according to the command.
 def dependantCommands(command, dependants):
-    commands = {"sort": sortCommand, "cat": catCommand}
+    commands = {"sort": sortCommand, "cat": catCommand, "help": helpCommand}
     commands[command](command, dependants)
     return
 
